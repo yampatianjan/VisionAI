@@ -74,7 +74,7 @@ VisionAI/
 Clone the repository
 
 ```bash
-git clone https://github.com/yampatianjan53-create/VisionAI.git
+git clone https://github.com/yampatianjan/VisionAI.git
 ```
 
 Install dependencies
