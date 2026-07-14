@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 VisionAI</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    </head>
+   <body>
+
+<header class="site-header">
+
+    <div class="container">
+
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                VisionAI
+            </a>
+
+            <span class="nav-status">
+                Cloud-Based Image Intelligence Platform
+            </span>
+
+        </nav>
+
+    </div>
+
+</header>
+
+<main>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="container">
+
+            <div class="hero-content">
+
+                <span class="hero-label">
+                    Powered by AWS Rekognition
+                </span>
+
+                <h1 class="hero-title">
+                    Analyze Images with Cloud AI
+                </h1>
+
+                <p class="hero-description">
+
+                    VisionAI detects objects, analyzes faces  
+                     and provides AI-powered insights
+                    from uploaded images in seconds.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ================= UPLOAD ================= -->
+
+    <section class="upload-section">
+
+        <div class="container">
+
+            <form id="uploadForm"
+                  action="/analyze"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <div class="upload-box" id="dropArea">
+
+    
+
+    <div class="upload-icon">
+        ⬆
+    </div>
+
+    <h2 id="uploadText">
+        Drop an image here
+    </h2>
+
+    <p>
+        or click to browse
+    </p>
+
+    <span id="filename">
+        PNG • JPG • JPEG • WEBP
+    </span>
+
+</div>
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/*"
+                    hidden
+                    required>
+
+                <button
+                    id="analyzeBtn"
+                    type="submit">
+
+                    Analyze
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- ================= RESULTS ================= -->
+
+    {% if labels %}
+
+    <section class="results">
+
+        <div class="container">
+
+            <h2 class="section-title">
+
+                Analysis Dashboard
+
+            </h2>
+
+            <div class="dashboard-grid">
+
+                <div class="metric-card">
+
+                    <span>Objects</span>
+
+                    <h3>{{ total }}</h3>
+
+                </div>
+
+                <div class="metric-card">
+
+                    <span>Faces</span>
+
+                    <h3>{{ faces|length }}</h3>
+
+                </div>
+
+                <div class="metric-card">
+
+                    <span>Processing</span>
+
+                    <h3>{{ processing_time }} s</h3>
+
+                </div>
+
+                <div class="metric-card">
+
+                    <span>File Size</span>
+
+                    <h3>{{ file_size }} KB</h3>
+
+                </div>
+
+                <div class="metric-card">
+
+                    <span>Top Detection</span>
+
+                    <h3>{{ highest.name }}</h3>
+
+                    <small>{{ highest.confidence }}%</small>
+
+                </div>
+
+               
+
+            </div>
+            <!-- ================= ORIGINAL IMAGE ================= -->
+
+            <div class="content-grid">
+
+                <div class="image-card">
+
+                    <h3 class="card-title">
+
+                        Original Image
+
+                    </h3>
+
+                    <img
+                        src="{{ image_path }}"
+                        alt="Uploaded Image"
+                        class="uploaded-image">
+
+                </div>
+                <div class="image-info">
+
+    <h3>Image Information</h3>
+
+    <div class="info-row">
+
+        <span>Filename</span>
+
+        <strong>{{ filename }}</strong>
+
+    </div>
+
+    <div class="info-row">
+
+        <span>Format</span>
+
+        <strong>{{ image_format }}</strong>
+
+    </div>
+
+    <div class="info-row">
+
+        <span>Resolution</span>
+
+        <strong>{{ image_width }} × {{ image_height }}</strong>
+
+    </div>
+
+    <div class="info-row">
+
+        <span>File Size</span>
+
+        <strong>{{ file_size }} KB</strong>
+
+    </div>
+
+</div>
+
+                <!-- ================= OBJECT DETECTION ================= -->
+
+                <div class="objects-card">
+
+                    <h3 class="card-title">
+
+                        Detected Objects
+
+                    </h3>
+
+                    {% for label in labels %}
+
+                    <div class="object-item">
+
+                        <div class="object-top">
+
+                            <span class="object-name">
+
+                                {{ label.icon }} {{ label.name }}
+
+                            </span>
+
+                            <span class="object-score">
+
+                                {{ label.confidence }}%
+
+                            </span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div class="progress-fill"
+                                 style="width: {{ label.confidence }}%;">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- ================= FACE ANALYSIS ================= -->
+
+            {% if faces %}
+
+<section class="face-section">
+
+    <h2 class="section-title">
+        Face Analysis
+    </h2>
+
+    <div class="face-grid">
+
+        {% for face in faces %}
+
+        <div class="face-card">
+
+            <div class="face-header">
+
+                <h3>Face {{ loop.index }}</h3>
+
+                <span class="face-status">
+                    Detected
+                </span>
+
+            </div>
+
+            <div class="face-item">
+
+                <span>Gender</span>
+
+                <strong>{{ face.gender }}</strong>
+
+            </div>
+
+            <div class="face-item">
+
+                <span>Age Range</span>
+
+                <strong>{{ face.age_low }} – {{ face.age_high }}</strong>
+
+            </div>
+
+            <div class="face-item">
+
+                <span>Emotion</span>
+
+                <strong>{{ face.emotion }}</strong>
+
+            </div>
+
+            <div class="face-item">
+
+                <span>Gender Confidence</span>
+
+                <strong>{{ face.gender_confidence }}%</strong>
+
+            </div>
+
+            <div class="face-item">
+
+                <span>Emotion Confidence</span>
+
+                <strong>{{ face.emotion_confidence }}%</strong>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+            <div class="action-buttons">
+
+    <a href="/" class="primary-btn">
+
+        Analyze Another Image
+
+    </a>
+
+    <a href="/download-report" class="secondary-btn">
+
+        Download PDF Report
+
+    </a>
+
+</div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+    <!-- ================= PROJECT OVERVIEW ================= -->
+
+    <section class="overview-section">
+
+        <div class="container">
+
+            <h2 class="section-title">
+
+                Project Overview
+
+            </h2>
+
+            <p class="overview-text">
+
+                VisionAI is a cloud-based image intelligence application built
+                using Python Flask and AWS Rekognition. It allows users to
+                upload an image and receive AI-powered insights including
+                object detection, face analysis 
+                through an intuitive web interface.
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- ================= TECHNOLOGY STACK ================= -->
+
+    <section class="tech-section">
+
+        <div class="container">
+
+            <h2 class="section-title">
+
+                Technology Stack
+
+            </h2>
+
+           <div class="tech-grid">
+
+    <span class="tech-chip">Python</span>
+
+    <span class="tech-chip">Flask</span>
+
+    <span class="tech-chip">AWS Rekognition</span>
+
+    <span class="tech-chip">Boto3</span>
+
+    <span class="tech-chip">HTML5</span>
+
+    <span class="tech-chip">CSS3</span>
+
+    <span class="tech-chip">JavaScript</span>
+
+    <span class="tech-chip">IAM</span>
+
+</div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+
+    <div class="container">
+
+        <h3>
+
+            VisionAI
+
+        </h3>
+
+        <p>
+
+            Cloud-Based Image Intelligence Platform
+
+        </p>
+
+        <p>
+
+            Built with Flask • AWS Rekognition • Boto3
+
+        </p>
+
+        <p>
+
+            © 2026 VisionAI
+
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!-- ===========================
+     Loading Overlay
+=========================== -->
+
+<div id="loadingOverlay">
+
+    <div class="loader-box">
+
+        <div class="spinner"></div>
+
+        <h2>Analyzing Image</h2>
+
+        <p>
+
+            VisionAI is processing your image using AWS Rekognition...
+
+        </p>
+
+    </div>
+
+</div>
+</body>
+
+</html>
+
+
+   

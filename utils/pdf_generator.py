@@ -1,0 +1,244 @@
+from io import BytesIO
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+
+def generate_report(analysis):
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+
+    styles = getSampleStyleSheet()
+
+    title_style = styles["Heading1"]
+    title_style.alignment = TA_CENTER
+    title_style.textColor = colors.HexColor("#2563EB")
+
+    heading_style = styles["Heading2"]
+
+    normal_style = styles["BodyText"]
+
+    elements = []
+
+    # ----------------------------------------------------
+    # Title
+    # ----------------------------------------------------
+
+    elements.append(
+        Paragraph("VisionAI", title_style)
+    )
+
+    elements.append(
+        Paragraph(
+            "Cloud Image Intelligence Platform",
+            normal_style
+        )
+    )
+
+    elements.append(Spacer(1, 20))
+
+    # ----------------------------------------------------
+    # Image Information
+    # ----------------------------------------------------
+
+    elements.append(
+        Paragraph("Image Information", heading_style)
+    )
+
+    image_table = Table([
+        ["Filename", analysis["filename"]],
+        ["Format", analysis["image_format"]],
+        ["Resolution",
+         f'{analysis["width"]} × {analysis["height"]}'],
+        ["File Size",
+         f'{analysis["file_size"]} KB'],
+        ["Processing Time",
+         f'{analysis["processing_time"]} sec']
+    ])
+
+    image_table.setStyle(
+
+        TableStyle([
+
+            ("BACKGROUND", (0, 0), (0, -1),
+             colors.HexColor("#EAF2FF")),
+
+            ("GRID", (0, 0), (-1, -1),
+             0.5, colors.grey),
+
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+
+            ("FONTNAME", (0, 0), (-1, 0),
+             "Helvetica-Bold"),
+
+        ])
+
+    )
+
+    elements.append(image_table)
+
+    elements.append(Spacer(1, 25))
+
+    # ----------------------------------------------------
+    # Object Detection
+    # ----------------------------------------------------
+
+    elements.append(
+        Paragraph("Detected Objects", heading_style)
+    )
+
+    object_data = [["Object", "Confidence"]]
+
+    for label in analysis["labels"]:
+
+        object_data.append(
+
+            [
+
+                label["name"],
+
+                f'{label["confidence"]}%'
+
+            ]
+
+        )
+
+    object_table = Table(object_data)
+
+    object_table.setStyle(
+
+        TableStyle([
+
+            ("BACKGROUND", (0, 0), (-1, 0),
+             colors.HexColor("#2563EB")),
+
+            ("TEXTCOLOR", (0, 0), (-1, 0),
+             colors.white),
+
+            ("GRID", (0, 0), (-1, -1),
+             0.5, colors.grey),
+
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+
+            ("BACKGROUND", (0, 1), (-1, -1),
+             colors.whitesmoke)
+
+        ])
+
+    )
+
+    elements.append(object_table)
+
+    elements.append(Spacer(1, 25))
+
+    # ----------------------------------------------------
+    # Face Analysis
+    # ----------------------------------------------------
+
+    elements.append(
+        Paragraph("Face Analysis", heading_style)
+    )
+
+    if analysis["faces"]:
+
+        for i, face in enumerate(
+                analysis["faces"], start=1):
+
+            face_table = Table([
+
+                ["Face", i],
+
+                ["Gender", face["gender"]],
+
+                ["Age",
+                 f'{face["age_low"]} - {face["age_high"]}'],
+
+                ["Emotion",
+                 face["emotion"]],
+
+                ["Gender Confidence",
+                 f'{face["gender_confidence"]}%'],
+
+                ["Emotion Confidence",
+                 f'{face["emotion_confidence"]}%']
+
+            ])
+
+            face_table.setStyle(
+
+                TableStyle([
+
+                    ("BACKGROUND",
+                     (0, 0), (0, -1),
+                     colors.HexColor("#EAF2FF")),
+
+                    ("GRID",
+                     (0, 0), (-1, -1),
+                     0.5,
+                     colors.grey),
+
+                    ("BOTTOMPADDING",
+                     (0, 0), (-1, -1), 8),
+
+                    ("TOPPADDING",
+                     (0, 0), (-1, -1), 8),
+
+                ])
+
+            )
+
+            elements.append(face_table)
+
+            elements.append(Spacer(1, 15))
+
+    else:
+
+        elements.append(
+
+            Paragraph(
+
+                "No faces detected.",
+
+                normal_style
+
+            )
+
+        )
+
+    elements.append(Spacer(1, 30))
+
+    # ----------------------------------------------------
+    # Footer
+    # ----------------------------------------------------
+
+    elements.append(
+
+        Paragraph(
+
+            "<b>Generated by VisionAI</b>",
+
+            normal_style
+
+        )
+
+    )
+
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    return buffer
