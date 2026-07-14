@@ -6,7 +6,6 @@ VisionAI is a cloud-based image intelligence platform built using Flask and AWS 
 
 ---
 
-## Features
 
 ## Features
 
@@ -75,7 +74,7 @@ VisionAI/
 Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/VisionAI.git
+git clone https://github.com/yampatianjan53-create/VisionAI.git
 ```
 
 Install dependencies
@@ -106,11 +105,12 @@ http://127.0.0.1:5000
 
 ## Sample Images
 
-Sample images are included in the `sample_images` folder for testing.
+## Sample Images
+
+The repository includes a collection of sample images in the `sample_images` folder to help users quickly test the application's object detection and face analysis features without needing to upload their own images.
 
 ---
 
-## Future Enhancements
 
 ## Future Enhancements
 

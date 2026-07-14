@@ -30,9 +30,7 @@ def generate_report(analysis):
 
     elements = []
 
-    # ----------------------------------------------------
     # Title
-    # ----------------------------------------------------
 
     elements.append(
         Paragraph("VisionAI", title_style)
@@ -47,9 +45,7 @@ def generate_report(analysis):
 
     elements.append(Spacer(1, 20))
 
-    # ----------------------------------------------------
     # Image Information
-    # ----------------------------------------------------
 
     elements.append(
         Paragraph("Image Information", heading_style)
@@ -91,9 +87,7 @@ def generate_report(analysis):
 
     elements.append(Spacer(1, 25))
 
-    # ----------------------------------------------------
     # Object Detection
-    # ----------------------------------------------------
 
     elements.append(
         Paragraph("Detected Objects", heading_style)
@@ -145,9 +139,7 @@ def generate_report(analysis):
 
     elements.append(Spacer(1, 25))
 
-    # ----------------------------------------------------
     # Face Analysis
-    # ----------------------------------------------------
 
     elements.append(
         Paragraph("Face Analysis", heading_style)
@@ -221,9 +213,7 @@ def generate_report(analysis):
 
     elements.append(Spacer(1, 30))
 
-    # ----------------------------------------------------
     # Footer
-    # ----------------------------------------------------
 
     elements.append(
 
