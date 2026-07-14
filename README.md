@@ -6,6 +6,41 @@ VisionAI is a cloud-based image intelligence platform built using Flask and AWS 
 
 ---
 
+## 🌐 Live Demo
+
+🚀 **Live Demo:** [VisionAI](https://visionai-u5c6.onrender.com)
+
+
+## 📸 Screenshots
+
+### Home Page
+
+![Home Page](screenshots/homepage.png)
+
+---
+
+### Analysis Results
+
+![Analysis](screenshots/analysis.png)
+
+---
+
+### Metrics 
+
+![Metrics](screenshots/Metrics.png)
+
+---
+
+### Utility
+
+![Utility](screenshots/Utility.png)
+
+---
+
+### PDF Report
+
+![PDF Report](screenshots/pdf-report.png)
+
 
 ## Features
 
